@@ -6,4 +6,4 @@ To start the server, enter `npm start`, and the server will start on localhost:3
 
 
 Send a GET request to /genjson to return the converted data as JSON  
-Send a POST request to /genjsonfile to create a file in the root directory of this project
+Send a POST request to /genjsonfile to create a file with the converted JSON data in the root directory of this project
