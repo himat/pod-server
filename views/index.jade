@@ -3,3 +3,8 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  form(method='post', action='/genjsonfile')
+    input#btn_gen_json(type='submit', value="Convert CSV to JSON file")
+    
+  form(method='get', action='/genjson')
+    input#btn_gen_json(type='submit', value="Convert CSV and return as JSON")
