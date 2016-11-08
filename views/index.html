@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World</title>
+  
+  <link rel="stylesheet" type="text/css" href="stylesheets/float-custom.css" >
+  <link rel="stylesheet" type="text/css" href="stylesheets/float-oocss.css" >
+  <link rel="stylesheet" type="text/css" href="stylesheets/style.css" >
+</head>
+<body>
+  
+  <div class="actuator_div">
+    <label> Braking actuators </label>
+    <label id="actuator_braking_state"> Extended </label>
+    <button onclick="extendActuators('braking')">Extend</button>
+    <button onclick="retractActuators('braking')">Retract</button>
+  </div>
+  
+  <div class="actuator_div">
+    <label>Levitation actuators</label>
+    <label id="actuator_levitation_state"> Extended </label>
+    <button onclick="extendActuators('levitation')">Extend</button>
+    <button onclick="retractActuators('levitation')">Retract</button>
+  </div>
+  
+  <div class="actuator_div">
+    (Other) actuators
+    <label id="actuator_other_state"> Extended </label>
+    <button onclick="extendActuators('other')">Extend</button>
+    <button onclick="retractActuators('other')">Retract</button>
+  </div>
+  
+  <div id="sensor_laser_div" class="sensor_table_div">
+    <table id="sensor_laser">  
+      <thead>
+        <tr>
+          <th>Point_number</th>
+          <th>Timestamp</th>
+          <th>Speed</th> 
+          <th>Distance</th> 
+          <th>Strength</th>
+          <th>Temperature</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ex_point</td>
+          <td>tmstp_some</td>
+          <td>-1</td> 
+          <td>-1</td> 
+          <td>-1</td>
+          <td>-1 K</td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+  
+  
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="jquery.stickytableheaders.min.js"></script>
+  
+  <script>
+    var laserNewData = false;
+    
+    $('table').stickyTableHeaders();
+    $("table").stickyTableHeaders({ scrollableArea: $(".sensor_table_div")[0], "fixedOffset": 2 });
+    
+    
+    function extendActuators(t) {
+      $.post('/actuators/extend', {type:t});
+      switch(t) {
+        case "braking":
+          $("#actuator_braking_state").html("Extended");
+          break;
+        case "levitation":
+          $("#actuator_levitation_state").html("Extended");
+          break;
+        case "other": 
+          $("#actuator_other_state").html("Extended");
+          break;
+      }
+    }
+    
+    function retractActuators(t) {
+      $.post('/actuators/retract', {type:t});
+      switch(t) {
+        case "braking":
+          $("#actuator_braking_state").html("Retracted");
+          break;
+        case "levitation":
+          $("#actuator_levitation_state").html("Retracted");
+          break;
+        case "other": 
+          $("#actuator_other_state").html("Retracted");
+          break;
+      }
+    }
+    
+    var socket = io.connect("http://localhost:4200");
+    socket.on("connect", function(data) {
+      socket.emit("join", "hello world from client");
+    });
+    
+    socket.on("sensor_clear", function (sensorType) {
+      $("#sensor_"+sensorType).find("tr:gt(0)").remove();      
+    });
+    
+    socket.on("sensor_update", function(data) {
+      var sensorType = data.type;
+      var sensorData = data.data;
+      
+      var words = sensorData.split(" ");
+      var formattedData = "<tr>";
+      for(i in words) {
+        formattedData += "<td>" + words[i] + "</td>"        
+      }
+      formattedData += "</tr>";
+      
+      $('#sensor_' + sensorType + ' tbody:last-child').append(formattedData);
+      
+      var ss = document.getElementById("sensor_" + sensorType + "_div");
+      ss.scrollTop = ss.scrollHeight;
+      
+    });
+  </script>
+</body>
+</html>

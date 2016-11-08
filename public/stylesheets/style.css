@@ -6,3 +6,43 @@ body {
 a {
   color: #00B7FF;
 }
+
+th {
+  text-align: center;
+  color: white;
+  background-color: dimgrey;
+}
+
+thead {
+  width: 100%;
+}
+
+tr {
+  width: 100%;
+}
+
+td {
+  text-align: center;
+}
+
+table {
+  height: 20%;
+}
+
+.sensor_table_div {
+  height: 500px;
+  overflow: auto;
+  border: solid black;
+  padding: 20px;
+  margin: 10px;
+}
+
+.actuator_div {
+  border: solid blue;
+  text-align: center;
+  display: block;
+}
+
+#sensor_laser {
+  width: 100%;
+}
